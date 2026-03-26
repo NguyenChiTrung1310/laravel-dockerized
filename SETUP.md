@@ -170,6 +170,31 @@ docker-compose exec app php artisan migrate:fresh --seed
 | Name | Test User |
 | Email | `test@example.com` |
 
+## Important: Run Artisan Commands Inside Docker
+
+All `php artisan` commands must be run inside the Docker container, **not** on your local machine:
+
+```bash
+docker-compose exec app php artisan <command>
+```
+
+### Route & Cache Management
+
+Routes are **cached on container startup**. After making changes to routes, controllers, or config, you must clear the cache — **no need to rebuild the container**:
+
+```bash
+# After adding/modifying routes or controllers
+docker-compose exec app php artisan route:clear
+
+# After deleting a controller and its route
+docker-compose exec app php artisan optimize:clear
+
+# View all registered routes
+docker-compose exec app php artisan route:list
+```
+
+> **Tip:** If you skip cache clearing after deleting a controller/route, the app will error because the cached routes still reference the deleted class.
+
 ## Frontend Development
 
 Frontend assets are built during Docker startup. To rebuild manually:
