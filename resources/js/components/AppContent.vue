@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { SidebarInset } from '@/components/ui/sidebar';
+import 'vue-sonner/style.css';
 import type { AppVariant } from '@/types';
+import { Toaster } from '@/components/ui/sonner';
 
 type Props = {
     variant?: AppVariant;
@@ -25,4 +27,5 @@ const className = computed(() => props.class);
     >
         <slot />
     </main>
+    <Toaster position="top-right" rich-colors />
 </template>

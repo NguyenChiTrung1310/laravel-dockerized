@@ -32,3 +32,5 @@ declare module 'vue' {
         route: typeof import('ziggy-js').route;
     }
 }
+
+declare const route: typeof import('ziggy-js').route;

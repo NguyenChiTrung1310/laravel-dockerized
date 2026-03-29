@@ -1,5 +1,8 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, useForm } from '@inertiajs/vue3';
+import { toast } from 'vue-sonner';
+import Button from '@/components/ui/button/Button.vue';
+import Input from '@/components/ui/input/Input.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import type { BreadcrumbItem } from '@/types';
 
@@ -9,6 +12,23 @@ const breadcrumbs: BreadcrumbItem[] = [
         href: '/users',
     },
 ];
+
+const form = useForm({
+    name: '',
+    email: '',
+    password: '',
+});
+
+function submit() {
+    form.post(route('users.store'), {
+        onSuccess: () => {
+            form.reset();
+        },
+        onError: () => {
+            toast.error('Please fix the errors below.');
+        },
+    });
+}
 </script>
 
 <template>
@@ -22,6 +42,42 @@ const breadcrumbs: BreadcrumbItem[] = [
             >
                 Back
             </Link>
+
+            <form
+                class="mx-auto mt-4 max-w-md space-y-6"
+                @submit.prevent="submit"
+            >
+                <Input
+                    label="Name"
+                    name="name"
+                    type="text"
+                    placeholder="Enter name"
+                    v-model="form.name"
+                    required
+                    :error="form.errors.name"
+                />
+                <Input
+                    label="Email"
+                    name="email"
+                    type="email"
+                    v-model="form.email"
+                    placeholder="Enter email"
+                    required
+                    :error="form.errors.email"
+                />
+
+                <Input
+                    label="Password"
+                    name="password"
+                    type="password"
+                    placeholder="Enter password"
+                    required
+                    v-model="form.password"
+                    :error="form.errors.password"
+                />
+
+                <Button type="submit" class="w-full"> Submit </Button>
+            </form>
         </div>
     </AppLayout>
 </template>
