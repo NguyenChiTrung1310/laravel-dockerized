@@ -1,0 +1,85 @@
+<script setup lang="ts">
+import { Head, Link } from '@inertiajs/vue3';
+import AppLayout from '@/layouts/AppLayout.vue';
+import type { BreadcrumbItem } from '@/types';
+
+interface User {
+    id: number;
+    name: string;
+    email: string;
+}
+
+defineProps<{
+    users: User[];
+}>();
+
+const breadcrumbs: BreadcrumbItem[] = [
+    {
+        title: 'Users',
+        href: '/users',
+    },
+];
+</script>
+
+<template>
+    <Head title="Users" />
+
+    <AppLayout :breadcrumbs="breadcrumbs">
+        <div class="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
+            <Link
+                :href="route('users.create')"
+                class="inline-flex max-w-fit items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
+            >
+                Create User
+            </Link>
+            <div
+                class="overflow-x-auto rounded-xl border border-sidebar-border/70 dark:border-sidebar-border"
+            >
+                <table
+                    class="min-w-full divide-y divide-gray-200 dark:divide-gray-700"
+                >
+                    <thead class="bg-gray-50 dark:bg-gray-800">
+                        <tr>
+                            <th
+                                class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-gray-400"
+                            >
+                                ID
+                            </th>
+                            <th
+                                class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-gray-400"
+                            >
+                                Name
+                            </th>
+                            <th
+                                class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-gray-400"
+                            >
+                                Email
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody
+                        class="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-900"
+                    >
+                        <tr v-for="user in users" :key="user.id">
+                            <td
+                                class="px-6 py-4 text-sm whitespace-nowrap text-gray-900 dark:text-gray-100"
+                            >
+                                {{ user.id }}
+                            </td>
+                            <td
+                                class="px-6 py-4 text-sm whitespace-nowrap text-gray-900 dark:text-gray-100"
+                            >
+                                {{ user.name }}
+                            </td>
+                            <td
+                                class="px-6 py-4 text-sm whitespace-nowrap text-gray-900 dark:text-gray-100"
+                            >
+                                {{ user.email }}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </AppLayout>
+</template>
