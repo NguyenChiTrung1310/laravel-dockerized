@@ -5,6 +5,13 @@ import laravel from 'laravel-vite-plugin';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
+    server: {
+        host: '0.0.0.0',
+        port: 5173,
+        hmr: {
+            host: 'localhost',
+        },
+    },
     plugins: [
         laravel({
             input: ['resources/js/app.ts'],
@@ -21,7 +28,7 @@ export default defineConfig({
             },
         }),
         wayfinder({
-            formVariants: true,
+            command: 'php artisan wayfinder:generate --with-form || true',
         }),
     ],
 });
