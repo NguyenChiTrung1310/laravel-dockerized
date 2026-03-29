@@ -21,11 +21,15 @@ const form = useForm({
 
 function submit() {
     form.post(route('users.store'), {
-        onSuccess: () => {
+        onSuccess: (page) => {
+            console.log('🚀 ~ submit ~ page:', page);
+            const flash = (page.props as any).flash;
+
+            if (flash?.success) {
+                toast.success(flash.success);
+            }
+
             form.reset();
-        },
-        onError: () => {
-            toast.error('Please fix the errors below.');
         },
     });
 }
