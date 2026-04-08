@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3';
+import Button from '@/components/ui/button/Button.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import type { BreadcrumbItem } from '@/types';
 
@@ -55,6 +56,7 @@ const breadcrumbs: BreadcrumbItem[] = [
                             >
                                 Email
                             </th>
+                            <th />
                         </tr>
                     </thead>
                     <tbody
@@ -75,6 +77,20 @@ const breadcrumbs: BreadcrumbItem[] = [
                                 class="px-6 py-4 text-sm whitespace-nowrap text-gray-900 dark:text-gray-100"
                             >
                                 {{ user.email }}
+                            </td>
+                            <td
+                                class="flex items-center justify-center gap-x-2 px-6 py-4"
+                            >
+                                <Link :href="route('users.edit', user.id)">
+                                    <Button
+                                        class="cursor-pointer bg-blue-500 text-xs font-medium text-white hover:bg-blue-700"
+                                        >Edit</Button
+                                    >
+                                </Link>
+                                <Button
+                                    class="cursor-pointer bg-red-500 text-xs font-medium text-white hover:bg-red-700"
+                                    >Delete</Button
+                                >
                             </td>
                         </tr>
                     </tbody>
