@@ -81,6 +81,12 @@ const breadcrumbs: BreadcrumbItem[] = [
                             <td
                                 class="flex items-center justify-center gap-x-2 px-6 py-4"
                             >
+                                <Link :href="route('users.show', user.id)">
+                                    <Button
+                                        class="cursor-pointer bg-slate-500 text-xs font-medium text-white hover:bg-slate-700"
+                                        >View</Button
+                                    >
+                                </Link>
                                 <Link :href="route('users.edit', user.id)">
                                     <Button
                                         class="cursor-pointer bg-blue-500 text-xs font-medium text-white hover:bg-blue-700"
