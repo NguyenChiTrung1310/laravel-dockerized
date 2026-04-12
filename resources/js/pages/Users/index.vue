@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, router } from '@inertiajs/vue3';
 import Button from '@/components/ui/button/Button.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import type { BreadcrumbItem } from '@/types';
@@ -20,6 +20,12 @@ const breadcrumbs: BreadcrumbItem[] = [
         href: '/users',
     },
 ];
+
+const deleteUser = (id: number) => {
+    if (confirm('Are you sure you want to delete this user?')) {
+        router.delete(route('users.destroy', id));
+    }
+};
 </script>
 
 <template>
@@ -94,6 +100,7 @@ const breadcrumbs: BreadcrumbItem[] = [
                                     >
                                 </Link>
                                 <Button
+                                    @click="deleteUser(user.id)"
                                     class="cursor-pointer bg-red-500 text-xs font-medium text-white hover:bg-red-700"
                                     >Delete</Button
                                 >
