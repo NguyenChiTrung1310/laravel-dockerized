@@ -23,10 +23,11 @@ services:
       test: ['CMD', 'curl', '-f', 'http://localhost']
       interval: 30s
       timeout: 10s
-      retries: 3
-      start_period: 40s
+      retries: 5
+      start_period: 120s
     volumes:
       - ./:/var/www/html
+      - pnpm_store:/root/.local/share/pnpm/store
 
   vite:
     build:
@@ -50,14 +51,15 @@ services:
         condition: service_healthy
     volumes:
       - ./:/var/www/html
-    entrypoint: ['npm', 'run', 'dev']
+      - pnpm_store:/root/.local/share/pnpm/store
+    entrypoint: ['pnpm', 'run', 'dev']
 
   mysql:
     image: mysql:8.0
     container_name: laravel_mysql
     restart: unless-stopped
     environment:
-      MYSQL_DATABASE: laravel
+      MYSQL_DATABASE: laravel_vue_dockerized
       MYSQL_USER: laravel
       MYSQL_PASSWORD: laravel
       MYSQL_ROOT_PASSWORD: root
@@ -85,3 +87,4 @@ services:
 
 volumes:
   mysql_data:
+  pnpm_store:

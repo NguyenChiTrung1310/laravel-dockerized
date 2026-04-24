@@ -10,7 +10,7 @@ ENV PHP_UPLOAD_MAX_FILESIZE=50M
 WORKDIR /var/www/html
 
 RUN apk add --no-cache bash curl mysql-client nodejs npm
-
+RUN npm install -g pnpm
 
 COPY composer.json composer.lock ./
 

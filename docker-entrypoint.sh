@@ -8,9 +8,10 @@ if [ ! -f /var/www/html/vendor/autoload.php ]; then
     composer install --no-interaction --optimize-autoloader
 fi
 
-echo "Running frontend build with npm..."
-npm install --legacy-peer-deps
-npm run build
+echo "Running frontend build with pnpm..."
+export CI=true
+pnpm install
+pnpm run build
 
 
 

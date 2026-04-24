@@ -104,7 +104,7 @@ chmod +x dev.sh
 # Utilities
 ./dev.sh shell         # Open bash inside app container
 ./dev.sh artisan <cmd> # Run any artisan command
-./dev.sh npm-build     # Rebuild frontend assets
+./dev.sh pnpm-build     # Rebuild frontend assets
 ./dev.sh status        # Show container status
 ./dev.sh logs [service]# View logs
 ./dev.sh clean         # Remove volumes and prune images
@@ -115,15 +115,18 @@ chmod +x dev.sh
 ```bash
 # Open a shell
 docker-compose exec app bash
+```
 
-# Run artisan commands
-docker-compose exec app php artisan <command>
+### Installing New Packages
 
-# Run Composer
-docker-compose exec app composer <command>
+When you need to add new PHP or Node.js dependencies, you must install them inside the container to match the target environment:
 
-# Run NPM
-docker-compose exec app npm <command>
+```bash
+# Install a new PHP package
+docker-compose exec app composer require <package-name>
+
+# Install a new NPM package
+docker-compose exec app pnpm add <package-name>
 ```
 
 ## Environment Configuration
@@ -179,6 +182,22 @@ All `php artisan` commands must be run inside the Docker container, **not** on y
 docker-compose exec app php artisan <command>
 ```
 
+### Creating Files & Classes
+
+Whenever you need to generate new Laravel components (Controllers, Models, Seeders, etc.) or execute specific operations, remember to prefix with `docker-compose exec app`.
+
+```bash
+# Create a new Seeder
+docker-compose exec app php artisan make:seeder ExampleSeeder
+
+# Create a new Resource Controller
+docker-compose exec app php artisan make:controller ExampleController --resource
+
+# Run a specific Seeder
+docker-compose exec app php artisan db:seed --class=ExampleSeeder
+# (or shorter: docker-compose exec app php artisan db:seed ExampleSeeder)
+```
+
 ### Route & Cache Management
 
 Routes are **cached on container startup**. After making changes to routes, controllers, or config, you must clear the cache — **no need to rebuild the container**:
@@ -196,15 +215,35 @@ docker-compose exec app php artisan route:list
 
 > **Tip:** If you skip cache clearing after deleting a controller/route, the app will error because the cached routes still reference the deleted class.
 
-## Frontend Development
+### Tinker & Queue Worker
 
-Frontend assets are built during Docker startup. To rebuild manually:
+These are common Laravel console tools you will likely use frequently during development:
 
 ```bash
-docker-compose exec app npm run build
+# Open Laravel Tinker (Interactive REPL)
+docker-compose exec app php artisan tinker
+
+# Start the Queue Worker (for background jobs)
+docker-compose exec app php artisan queue:work
 ```
 
-> **Note:** Hot Module Replacement (HMR) via `npm run dev` is not configured for Docker. Frontend changes require running `npm run build` inside the container, or you can run Vite locally if you have Node.js installed.
+## Frontend Development
+
+Frontend assets are built during Docker startup. If you need to rebuild them manually inside the container:
+
+```bash
+docker-compose exec app pnpm build
+```
+
+### Enabling Hot Module Replacement (HMR)
+
+Constantly running `pnpm build` after every frontend change is very slow. For a proper Developer Experience (DX) with instant updates (HMR), it is highly recommended to run Vite on your **local machine (host)** while the backend runs in Docker:
+
+1. Ensure you have Node.js installed locally on your machine.
+2. Install NPM packages locally (only needed once): `pnpm install`
+3. Start the Vite dev server locally: `pnpm dev`
+
+By doing this, Vite will proxy requests and automatically refresh the browser when you edit Vue or Tailwind CSS files.
 
 ## Running Tests
 
@@ -226,10 +265,10 @@ docker-compose exec app php artisan test --coverage
 docker-compose exec app vendor/bin/pint
 
 # Check frontend linting
-docker-compose exec app npm run lint
+docker-compose exec app pnpm lint
 
 # Format frontend code
-docker-compose exec app npm run format
+docker-compose exec app pnpm format
 ```
 
 ## Troubleshooting

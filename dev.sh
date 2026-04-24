@@ -52,9 +52,9 @@ case "$1" in
         docker-compose exec app php artisan "$@"
         ;;
 
-    "npm-build")
-        echo "Running npm run build..."
-        docker-compose exec app npm run build
+    "pnpm-build")
+        echo "Running pnpm run build..."
+        docker-compose exec app pnpm run build
         ;;
     "status")
         echo "Container status:"
