@@ -36,13 +36,13 @@ class RoleController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'permission' => 'required|array',
-            'permission.*' => 'string|exists:permissions,name',
+            'permissions' => 'required|array',
+            'permissions.*' => 'string|exists:permissions,name',
         ]);
 
         $role = Role::create(['name' => $request->name]);
 
-        $role->syncPermissions($request->permission);
+        $role->syncPermissions($request->permissions);
         return to_route('roles.index')->with('success', 'Role created successfully.');}
 
     /**
@@ -50,7 +50,9 @@ class RoleController extends Controller
      */
     public function show(string $id)
     {
-        //
+        return Inertia::render('Roles/Show', [
+            'role' => Role::with('permissions')->findOrFail($id)
+        ]);
     }
 
     /**
@@ -58,7 +60,16 @@ class RoleController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $role = Role::findOrFail($id);
+
+        return Inertia::render('Roles/Edit', [
+            'role' => [
+                'id' => $role->id,
+                'name' => $role->name,
+                'permissions' => $role->permissions()->pluck('name')->all()
+            ],
+            'permissions' => Permission::pluck('name')->all()
+        ]);
     }
 
     /**
@@ -66,7 +77,17 @@ class RoleController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'permissions' => 'required|array',
+            'permissions.*' => 'string|exists:permissions,name',
+        ]);
+
+        $role = Role::findOrFail($id);
+        $role->update(['name' => $request->name]);
+        $role->syncPermissions($request->permissions);
+
+        return to_route('roles.index')->with('success', 'Role updated successfully.');
     }
 
     /**
