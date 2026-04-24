@@ -26,6 +26,7 @@ docker-compose up --build
 ```
 
 That's it. The entrypoint script automatically handles:
+
 - Installing Composer dependencies
 - Installing NPM dependencies and building frontend assets
 - Waiting for MySQL to be ready
@@ -234,6 +235,7 @@ docker-compose exec app npm run format
 ## Troubleshooting
 
 ### Containers won't start
+
 ```bash
 # Check what's running
 docker-compose ps
@@ -243,23 +245,29 @@ docker-compose logs -f app
 ```
 
 ### "MySQL is unavailable" loop on startup
+
 This usually means the app container cannot authenticate with MySQL. Common causes:
 
 1. **Changed database credentials in `docker-compose.yml`** — MySQL only sets the root password on first initialization. If you changed `MYSQL_ROOT_PASSWORD` after the volume was already created, the old password is still stored in the volume. Fix:
+
    ```bash
    # Remove containers AND volumes, then rebuild
    docker-compose down -v
    docker-compose up --build
    ```
+
    > **Warning:** `-v` deletes the `mysql_data` volume. All database data will be lost (migrations and seeders will re-run automatically).
 
 2. **MySQL hasn't finished initializing** — On first run, MySQL can take 30-60 seconds to initialize. The app will retry automatically. Check MySQL logs:
+
    ```bash
    docker-compose logs -f mysql
    ```
 
 ### Database connection refused
+
 The app waits for MySQL on startup, but if issues persist:
+
 ```bash
 # Check MySQL is running
 docker-compose logs mysql
@@ -269,7 +277,9 @@ docker-compose restart mysql
 ```
 
 ### Port already in use
+
 If port 8000 or 3306 is occupied:
+
 ```bash
 # Find what's using the port
 lsof -i :8000
@@ -279,6 +289,7 @@ lsof -i :8000
 ```
 
 ### Need a full reset
+
 ```bash
 # Remove everything (containers, volumes, data)
 docker-compose down -v
@@ -286,6 +297,20 @@ docker-compose up --build
 ```
 
 > **Warning:** `-v` removes the MySQL data volume. All database data will be lost.
+
+### Frontend Route Errors ("Cannot read properties of undefined" or "@routes" showing in UI)
+
+If you see `@routes` printed as plain text in the browser or encounter a console error like `Cannot read properties of undefined (reading 'route.name')`, it means the Ziggy routing package wasn't fully registered or the views were cached prior to its installation.
+
+```bash
+# Install missing dependencies
+docker-compose exec app composer install
+
+# Clear application and view caches
+docker-compose exec app php artisan optimize:clear
+```
+
+After running these commands, refresh your browser.
 
 ## Project Structure
 
