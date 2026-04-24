@@ -28,6 +28,11 @@ const mainNavItems: NavItem[] = [
         href: '/users',
         icon: Users,
     },
+    {
+        title: 'Roles',
+        href: '/roles',
+        icon: FolderGit2,
+    },
 ];
 
 const footerNavItems: NavItem[] = [
